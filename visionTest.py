@@ -6,7 +6,7 @@ import io, os
 image_base_path = 'images'
 #image_path = os.path.join(image_base_path, 'image_test.png')
 #image_path = os.path.join(image_base_path, 'manga001.jpg')
-image_path = os.path.join(image_base_path, 'merchant.PNG')
+image_path = os.path.join(image_base_path, 'totemo.PNG')
 
 
 def pic_to_text(image_path):

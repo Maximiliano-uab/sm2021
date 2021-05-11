@@ -2,11 +2,15 @@ from google.cloud import vision
 from google.cloud import translate_v3beta1 as translate
 from google.oauth2 import service_account
 import io, os
+import cv2
+import matplotlib.pyplot as plt
+
 
 image_base_path = 'images'
 #image_path = os.path.join(image_base_path, 'image_test.png')
 #image_path = os.path.join(image_base_path, 'manga001.jpg')
-image_path = os.path.join(image_base_path, 'chinito.png')
+#image_path = os.path.join(image_base_path, 'chinito.png')
+image_path = os.path.join(image_base_path, 'totemo.PNG')
 
 
 def pic_to_text(image_path):
@@ -25,12 +29,11 @@ def pic_to_text(image_path):
 
     texts = response.full_text_annotation.text
 
-    print(response)
-    return texts
+    return response.full_text_annotation
 
 def draw_rectangle(img, bbox):
 
-    cv2.rectangle(img,bbox[0],bbox[1],(255,255,255),3)
+    cv2.rectangle(img,bbox[0],bbox[1],(255,0,0),3)
 
     return img
 
@@ -63,5 +66,42 @@ def text_translate(text, locale = 'ja'):
     )    
 
 
+text = pic_to_text(image_path)
 
-print(pic_to_text(image_path))
+#print(text)
+
+print(type(text.pages))
+
+bounds = []
+bounds = []
+for page in text.pages:
+    
+    for block in page.blocks:
+        b = []
+        """
+        for paragraph in block.paragraphs:
+            for word in paragraph.words:
+                for symbol in word.symbols:
+                    
+        """
+
+        for verti in block.bounding_box.vertices:
+
+            b.append((verti.x, verti.y))
+
+        bounds.append(b)
+        #print(block.bounding_box)
+
+
+#print(text.pages.blocks)
+print(bounds)
+
+image = cv2.imread(image_path)
+image_rect = image
+for b in bounds:
+    image_rect = draw_rectangle(image_rect, [b[0], b[2]])
+
+
+cv2.imwrite('test.png', image_rect)
+
+
