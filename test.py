@@ -33,7 +33,7 @@ def pic_to_text(image_path):
 
 def draw_rectangle(img, bbox):
 
-    cv2.rectangle(img,bbox[0],bbox[1],(255,0,0),3)
+    cv2.rectangle(img,bbox[0],bbox[1],(255,0,0),-1)
 
     return img
 
