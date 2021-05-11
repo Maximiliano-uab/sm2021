@@ -28,6 +28,11 @@ def pic_to_text(image_path):
     print(response)
     return texts
 
+def draw_rectangle(img, bbox):
+
+    cv2.rectangle(img,bbox[0],bbox[1],(255,255,255),3)
+
+    return img
 
 def text_translate(text, locale = 'ja'):
 
