@@ -5,8 +5,14 @@ import io, os
 
 image_base_path = 'images'
 #image_path = os.path.join(image_base_path, 'image_test.png')
-#image_path = os.path.join(image_base_path, 'manga001.jpg')
-image_path = os.path.join(image_base_path, 'merchant.PNG')
+#image_path = os.path.join(image_base_path, 'manga001.jpg') #'merchant.PNG'
+
+import sys
+
+#print 'Number of arguments:', len(sys.argv), 'arguments.'
+
+
+image_path = os.path.join(image_base_path, str(sys.argv[1]))
 
 
 def pic_to_text(image_path):
@@ -23,7 +29,7 @@ def pic_to_text(image_path):
 
     #texts = response.text_annotations
 
-    texts = response.full_text_annotation.text
+    texts = response.full_text_annotation
 
     print(response)
     return texts
