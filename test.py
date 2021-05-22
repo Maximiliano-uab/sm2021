@@ -1,9 +1,8 @@
 from google.cloud import vision
-from google.cloud import translate_v3beta1 as translate
+from google.cloud import translate_v3 as translate
 from google.oauth2 import service_account
 import io, os
-import cv2
-import matplotlib.pyplot as plt
+#import cv2
 
 
 image_base_path = 'images'
@@ -37,7 +36,7 @@ def draw_rectangle(img, bbox):
 
     return img
 
-def text_translate(text, locale = 'ja'):
+def text_translate(text, locale = 'es', project_id = 'sm2021'):
 
     if locale is None:
         locale = 'ja'
@@ -49,31 +48,56 @@ def text_translate(text, locale = 'ja'):
     location = "us-central1"
 
     # Set glossary resource name
-    name = client.glossary_path(project_id, location, glossary_name)
+    name = client.glossary_path(project_id, location)
 
     # Set language codes
     language_codes_set = translate.Glossary.LanguageCodesSet(
         language_codes=languages
     )
 
-    gcs_source = translate.GcsSource(input_uri=glossary_uri)
+    #gcs_source = translate.GcsSource(input_uri=glossary_uri)
 
-    input_config = translate.GlossaryInputConfig(gcs_source=gcs_source)
+    input_config = translate.GlossaryInputConfig()
 
     # Set glossary resource information
     glossary = translate.Glossary(
         name=name, language_codes_set=language_codes_set, input_config=input_config
     )    
 
+def translate_text2(target, text):
+    """Translates text into the target language.
+
+    Target must be an ISO 639-1 language code.
+    See https://g.co/cloud/translate/v2/translate-reference#supported_languages
+    """
+    import six
+    from google.cloud import translate_v2 as translate
+
+    credentials = service_account.Credentials.from_service_account_file('SM-2021-4a699763da54.json')
+    translate_client = translate.Client(credentials = credentials)
+
+    if isinstance(text, six.binary_type):
+        text = text.decode("utf-8")
+
+    # Text can also be a sequence of strings, in which case this method
+    # will return a sequence of results for each text.
+    result = translate_client.translate(text, target_language=target)
+
+    print(u"Text: {}".format(result["input"]))
+    print(u"Translation: {}".format(result["translatedText"]))
+    print(u"Detected source language: {}".format(result["detectedSourceLanguage"]))
+
 
 text = pic_to_text(image_path)
 
 #print(text)
+print(translate_text2('es', 'table'))
+print(text.text)
 
-print(type(text.pages))
+import sys
+sys.exit()
+bounds = []
 
-bounds = []
-bounds = []
 for page in text.pages:
     
     for block in page.blocks:
@@ -90,6 +114,7 @@ for page in text.pages:
             b.append((verti.x, verti.y))
 
         bounds.append(b)
+
         #print(block.bounding_box)
 
 
